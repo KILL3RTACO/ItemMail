@@ -1,6 +1,6 @@
 name: ItemMail
-main: taco.itemmail.ItemMailMain
-version: 3.0.1
+main: com.kill3rtaco.itemmail.ItemMailMain
+version: 3.0.2
 description: An easier way to trade
 depend: [TacoAPI]
 commands:
