@@ -3,8 +3,8 @@ package com.kill3rtaco.itemmail.cmds.im;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.kill3rtaco.itemmail.ItemMailConstants;
 import com.kill3rtaco.itemmail.ItemMailMain;
-import com.kill3rtaco.itemmail.Permission;
 import com.kill3rtaco.itemmail.request.ItemRequest;
 import com.kill3rtaco.tacoapi.TacoAPI;
 import com.kill3rtaco.tacoapi.api.TacoCommand;
@@ -12,7 +12,7 @@ import com.kill3rtaco.tacoapi.api.TacoCommand;
 public class RequestCommand extends TacoCommand {
 
 	public RequestCommand() {
-		super("request", new String[]{"req"}, "<player> <item[:damage]> [amount]", "Request ItemMail", Permission.SEND_REQUEST);
+		super("request", new String[]{"req"}, "<player> <item[:damage]> [amount]", "Request ItemMail", ItemMailConstants.P_SEND_REQUEST);
 	}
 
 	@Override
@@ -47,11 +47,9 @@ public class RequestCommand extends TacoCommand {
 			ItemMailMain.plugin.chat.sendPlayerMessage(player, "&cYou cannot send ItemMail to yourself");
 			return;
 		}
-		int id = items.getTypeId(), damage = items.getDurability();
-		amount = items.getAmount();
-		ItemRequest request = new ItemRequest(player.getName(), receiver, id, damage, amount);
+		ItemRequest request = new ItemRequest(player.getName(), receiver, items);
 		request.send();
-		String friendlyName = ItemMailMain.plugin.getDisplayString(new ItemStack(id, amount, (short) damage));
+		String friendlyName = ItemMailMain.plugin.getDisplayString(items);
 		ItemMailMain.plugin.chat.sendPlayerMessage(player, "&aYou requested &2" + receiver + " &ato send you &2" + amount + " " + friendlyName);
 	}
 

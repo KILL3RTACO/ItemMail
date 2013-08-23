@@ -2,8 +2,8 @@ package com.kill3rtaco.itemmail.cmds.im;
 
 import org.bukkit.entity.Player;
 
+import com.kill3rtaco.itemmail.ItemMailConstants;
 import com.kill3rtaco.itemmail.ItemMailMain;
-import com.kill3rtaco.itemmail.Permission;
 import com.kill3rtaco.itemmail.request.ItemRequestBox;
 import com.kill3rtaco.tacoapi.TacoAPI;
 import com.kill3rtaco.tacoapi.api.TacoCommand;
@@ -11,7 +11,7 @@ import com.kill3rtaco.tacoapi.api.TacoCommand;
 public class RequestBoxCommand extends TacoCommand {
 
 	public RequestBoxCommand() {
-		super("rb", new String[]{"requestbox"}, "[page]", "View your ItemRequestBox", Permission.VIEW_REQUESTBOX);
+		super("rb", new String[]{"requestbox"}, "[page]", "View your ItemRequestBox", ItemMailConstants.P_VIEW_REQUESTBOX);
 	}
 
 	@Override

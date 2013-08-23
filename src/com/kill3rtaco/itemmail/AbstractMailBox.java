@@ -40,9 +40,9 @@ public abstract class AbstractMailBox<M extends AbstractMail> implements Iterabl
 	 */
 	public M get(int index){
 		reload();
-		try{
+		if(index >= 0 && index < unopened.size()){
 			return unopened.get(index);
-		} catch (IndexOutOfBoundsException e){
+		}else{
 			return null;
 		}
 	}
@@ -59,7 +59,7 @@ public abstract class AbstractMailBox<M extends AbstractMail> implements Iterabl
 			String display = "";
 			if(m instanceof ItemMail){
 				ItemMail im = (ItemMail) m;
-				if(im.getItemDisplayName().length() > 0){
+				if(im.getItemDisplayName() != null && im.getItemDisplayName().length() > 0){
 					display += "&2&o" + im.getItemDisplayName() + "&r";
 					DisplayName dn = DisplayName.getDisplayName(im.getItemTypeId(), im.getItemDamage());
 					if(dn != null) display += " &a(&2" + dn.getName() + "&a)";
@@ -75,7 +75,8 @@ public abstract class AbstractMailBox<M extends AbstractMail> implements Iterabl
 				else display += TacoAPI.getChatUtils().toProperCase(m.getItems().getType().name().replaceAll("_", " "));
 			}
 //			String line = "&7[&9" + (count++) + "&7] &6From&7: &2" + m.getSender() + " &6Contents&7: &2" + m.getItemAmount() + " " + display;
-			String line = format.replaceAll("%id", "" + count++)
+			String line = format
+					.replaceAll("%id", "" + count++)
 					.replaceAll("%from", m.getSender())
 					.replaceAll("%items", m.getItemAmount() + " " + display);
 			mail.append(line);
@@ -115,13 +116,13 @@ public abstract class AbstractMailBox<M extends AbstractMail> implements Iterabl
 	
 	public void delete(int index){
 		M mail = get(index);
-		String sql = "UPDATE `im_data` SET `read`=? WHERE `id`=? LIMIT 1";
+		String sql = "UPDATE `itemmail` SET `read`=? WHERE `id`=? LIMIT 1";
 		TacoAPI.getDB().write(sql, 1, mail.getMailId());
 	}
 	
 	public void deleteAll(){
 		for(M mail : unopened){
-			String sql = "UPDATE `im_data` SET `read`=? WHERE `id`=? LIMIT 1";
+			String sql = "UPDATE `itemmail` SET `read`=? WHERE `id`=? LIMIT 1";
 			TacoAPI.getDB().write(sql, 1, mail.getMailId());
 		}
 	}

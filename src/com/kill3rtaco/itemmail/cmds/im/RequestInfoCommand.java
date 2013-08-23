@@ -2,8 +2,8 @@ package com.kill3rtaco.itemmail.cmds.im;
 
 import org.bukkit.entity.Player;
 
+import com.kill3rtaco.itemmail.ItemMailConstants;
 import com.kill3rtaco.itemmail.ItemMailMain;
-import com.kill3rtaco.itemmail.Permission;
 import com.kill3rtaco.itemmail.request.ItemRequest;
 import com.kill3rtaco.itemmail.request.ItemRequestBox;
 import com.kill3rtaco.tacoapi.TacoAPI;
@@ -13,7 +13,7 @@ import com.kill3rtaco.tacoapi.util.ItemUtils.DisplayName;
 public class RequestInfoCommand extends TacoCommand {
 
 	public RequestInfoCommand() {
-		super("request-info", new String[]{"ri"}, "[id]", "View detailed ItemRequest information", Permission.VIEW_REQUEST_INFO);
+		super("request-info", new String[]{"ri"}, "[id]", "View detailed ItemRequest information", ItemMailConstants.P_VIEW_REQUEST_INFO);
 	}
 
 	@Override

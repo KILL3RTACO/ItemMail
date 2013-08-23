@@ -5,8 +5,11 @@ import java.sql.Timestamp;
 import org.bukkit.inventory.ItemStack;
 
 import com.kill3rtaco.tacoapi.TacoAPI;
+import com.kill3rtaco.tacoapi.api.serialization.SingleItemSerialization;
 import com.kill3rtaco.tacoapi.database.DatabaseException;
 import com.kill3rtaco.tacoapi.database.QueryResults;
+import com.kill3rtaco.tacoapi.json.JSONException;
+import com.kill3rtaco.tacoapi.json.JSONObject;
 
 /**
  * Represents an abstract version of a mail type object.
@@ -15,9 +18,11 @@ import com.kill3rtaco.tacoapi.database.QueryResults;
  */
 public abstract class AbstractMail {
 
+	protected int id;
 	protected String sender, receiver;
-	protected int mailId, itemId, itemDamage, itemAmount;
+	protected ItemStack items;
 	protected Timestamp sent;
+	protected JSONObject rawData;
 	
 	/**
 	 * Constructs an AbstractMail object using an id as a parameter. This is the id used to specify this specific
@@ -29,16 +34,20 @@ public abstract class AbstractMail {
 	 * @see {@link com.kill3rtaco.itemmail.mail.ItemMail ItemMail}
 	 */
 	public AbstractMail(int id) throws DatabaseException {
-		String sql = "SELECT * FROM `im_data` WHERE `id`=? LIMIT 1";
+		String sql = "SELECT * FROM `itemmail` WHERE `id`=? LIMIT 1";
 		QueryResults query = TacoAPI.getDB().read(sql, id);
 		if(query != null && query.hasRows()){
-			mailId = id;
-			sender = query.getString(0, "sender");
-			receiver = query.getString(0, "receiver");
-			itemId = query.getInteger(0, "item_id");
-			itemDamage = query.getInteger(0, "item_damage");
-			itemAmount = query.getInteger(0, "item_amount");
-			sent = query.getTimestamp(0, "time_sent");
+			this.id = id;
+			this.sender = query.getString(0, "sender");
+			this.receiver = query.getString(0, "receiver");
+			try {
+				this.rawData = new JSONObject(query.getString(0, "item"));
+				this.items = SingleItemSerialization.getItem(rawData);
+			} catch (JSONException e) {
+				e.printStackTrace();
+				this.items = null;
+			}
+			this.sent = query.getTimestamp(0, "time");
 		}
 	}
 	
@@ -51,14 +60,13 @@ public abstract class AbstractMail {
 	 * @param itemDamage The damage value (durability) of the items
 	 * @param itemAmount The amount of the items
 	 */
-	public AbstractMail(String sender, String receiver, int itemId, int itemDamage, int itemAmount){
-		this.mailId = -1;
+	public AbstractMail(String sender, String receiver, ItemStack items){
+		this.id = -1;
 		this.sender = sender;
 		this.receiver = receiver;
-		this.itemId = itemId;
-		this.itemDamage = itemDamage;
-		this.itemAmount = itemAmount;
+		this.items = items;
 		this.sent = null;
+		this.rawData = null;
 	}
 	
 	public abstract void send();
@@ -68,7 +76,7 @@ public abstract class AbstractMail {
 	 * @return The MailID
 	 */
 	public int getMailId(){
-		return mailId;
+		return id;
 	}
 	
 	/**
@@ -93,7 +101,7 @@ public abstract class AbstractMail {
 	 * @return The items associated
 	 */
 	public ItemStack getItems(){
-		return new ItemStack(itemId, itemAmount, (short) itemDamage);
+		return items;
 	}
 	
 	/**
@@ -101,7 +109,7 @@ public abstract class AbstractMail {
 	 * @return The item id
 	 */
 	public int getItemTypeId(){
-		return itemId;
+		return items.getTypeId();
 	}
 	
 	/**
@@ -109,7 +117,7 @@ public abstract class AbstractMail {
 	 * @return the item damage/durability
 	 */
 	public int getItemDamage(){
-		return itemDamage;
+		return items.getDurability();
 	}
 	
 	/**
@@ -117,7 +125,7 @@ public abstract class AbstractMail {
 	 * @return The amount of items
 	 */
 	public int getItemAmount(){
-		return itemAmount;
+		return items.getAmount();
 	}
 	
 	/**
@@ -134,6 +142,14 @@ public abstract class AbstractMail {
 	 */
 	public boolean hasBeenSent(){
 		return sent != null;
+	}
+	
+	/**
+	 * Get raw data
+	 * @return The raw JSONObject data
+	 */
+	public JSONObject getRawData(){
+		return rawData;
 	}
 	
 }

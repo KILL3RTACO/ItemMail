@@ -3,8 +3,8 @@ package com.kill3rtaco.itemmail.cmds.im;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.kill3rtaco.itemmail.ItemMailConstants;
 import com.kill3rtaco.itemmail.ItemMailMain;
-import com.kill3rtaco.itemmail.Permission;
 import com.kill3rtaco.itemmail.mail.ItemMail;
 import com.kill3rtaco.tacoapi.TacoAPI;
 import com.kill3rtaco.tacoapi.api.TacoCommand;
@@ -12,7 +12,7 @@ import com.kill3rtaco.tacoapi.api.TacoCommand;
 public class SendCommand extends TacoCommand {
 
 	public SendCommand() {
-		super("send", new String[]{}, "<player> [item[:damage]] [amount]", "Send ItemMail", Permission.SEND_MAIL);
+		super("send", new String[]{}, "<player> [item[:damage]] [amount]", "Send ItemMail", ItemMailConstants.P_SEND_REQUEST);
 	}
 
 	@Override
@@ -21,10 +21,9 @@ public class SendCommand extends TacoCommand {
 			ItemMailMain.plugin.chat.sendPlayerMessage(player, "&cMust at least specify a player to send to");
 			return;
 		}
-		String receiver = args[0], enchants = "", name = "";
+		String receiver = args[0];
 		Player p = ItemMailMain.plugin.getServer().getPlayer(receiver);
 		if(p != null) receiver = p.getName();
-		int id = 0, damage = 0, amount = 1;
 		ItemStack items = null;
 		if(args.length == 1){
 			items = player.getItemInHand();
@@ -32,45 +31,25 @@ public class SendCommand extends TacoCommand {
 				ItemMailMain.plugin.chat.sendPlayerMessage(player, "&cYou are not holding anything");
 				return;
 			}
-			id = items.getTypeId();
-			damage = items.getDurability();
-			amount = items.getAmount();
-			if(items.getEnchantments().size() > 0)
-				enchants = ItemMailMain.plugin.getCodeFromEnchantments(items.getEnchantments());
-			if(items.getItemMeta().hasDisplayName())
-				name = items.getItemMeta().getDisplayName();
 		}else if(args.length == 2){
-			amount = 1;
-			items = TacoAPI.getItemUtils().createItemStack(args[1], amount);
+			items = TacoAPI.getItemUtils().createItemStack(args[1], 1);
 			if(items == null){
 				ItemMailMain.plugin.chat.sendPlayerMessage(player, "&e" + args[1] + " &cnot recognized");
 				return;
 			}
-			id = items.getTypeId();
-			damage = items.getDurability();
-			if(items.getEnchantments().size() > 0)
-				enchants = ItemMailMain.plugin.getCodeFromEnchantments(items.getEnchantments());
-			if(items.getItemMeta().hasDisplayName())
-				name = items.getItemMeta().getDisplayName();
 		}else{
 			if(TacoAPI.getChatUtils().isNum(args[2])){
-				amount = Integer.parseInt(args[2]);
+				int amount = Integer.parseInt(args[2]);
 				items = TacoAPI.getItemUtils().createItemStack(args[1], amount);
 				if(items == null){
 					ItemMailMain.plugin.chat.sendPlayerMessage(player, "&e" + args[1] + " &c not recognized");
 					return;
 				}
-				id = items.getTypeId();
-				damage = items.getDurability();
-				if(items.getEnchantments().size() > 0)
-					enchants = ItemMailMain.plugin.getCodeFromEnchantments(items.getEnchantments());
-				if(items.getItemMeta().hasDisplayName())
-					name = items.getItemMeta().getDisplayName();
 			}else{
 				ItemMailMain.plugin.chat.sendPlayerMessage(player, "&e" + args[2] + " &cis not a valid number");
-			}
+			}	
 		}
-		if(id == 0){
+		if(items.getTypeId() == 0){
 			ItemMailMain.plugin.chat.sendPlayerMessage(player, "&cYou cannot send air");
 			return;
 		}
@@ -79,10 +58,13 @@ public class SendCommand extends TacoCommand {
 			ItemMailMain.plugin.chat.sendPlayerMessage(player, "&cYou cannot send ItemMail to yourself");
 			return;
 		}
+		String name = "";
+		if(items.getItemMeta().hasDisplayName()){
+			name = items.getItemMeta().getDisplayName();
+		}
 		String display = ItemMailMain.plugin.getDisplayString(items, name);
 		if(TacoAPI.getPlayerAPI().getInventoryAPI().takeItems(player, items)){
-			ItemMail im = new ItemMail(player.getName(), receiver, id, damage, amount, name, enchants);
-			im.send();
+			ItemMail.sendUnsafely(player.getName(), receiver, items, "");
 			ItemMailMain.plugin.chat.sendPlayerMessage(player, "&aYou sent &2" + items.getAmount() + " " + display + " &ato &2" + receiver);
 		}else{
 			ItemMailMain.plugin.chat.sendPlayerMessage(player, "&cYou don't have &e" + items.getAmount() + " " + display);

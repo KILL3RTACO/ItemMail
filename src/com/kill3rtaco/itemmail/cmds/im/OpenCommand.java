@@ -2,8 +2,8 @@ package com.kill3rtaco.itemmail.cmds.im;
 
 import org.bukkit.entity.Player;
 
+import com.kill3rtaco.itemmail.ItemMailConstants;
 import com.kill3rtaco.itemmail.ItemMailMain;
-import com.kill3rtaco.itemmail.Permission;
 import com.kill3rtaco.itemmail.mail.ItemMail;
 import com.kill3rtaco.itemmail.mail.ItemMailBox;
 import com.kill3rtaco.tacoapi.TacoAPI;
@@ -12,7 +12,7 @@ import com.kill3rtaco.tacoapi.api.TacoCommand;
 public class OpenCommand extends TacoCommand {
 
 	public OpenCommand() {
-		super("open", new String[]{"o"}, "[id]", "Open ItemMail", Permission.OPEN_MAIL);
+		super("open", new String[]{"o"}, "[id]", "Open ItemMail", ItemMailConstants.P_OPEN_MAIL);
 	}
 
 	@Override

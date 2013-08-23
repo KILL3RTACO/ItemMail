@@ -1,19 +1,23 @@
 package com.kill3rtaco.itemmail.cmds.im;
 
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
+import com.kill3rtaco.itemmail.ItemMailConstants;
 import com.kill3rtaco.itemmail.ItemMailMain;
-import com.kill3rtaco.itemmail.Permission;
 import com.kill3rtaco.itemmail.mail.ItemMail;
 import com.kill3rtaco.itemmail.mail.ItemMailBox;
 import com.kill3rtaco.tacoapi.TacoAPI;
 import com.kill3rtaco.tacoapi.api.TacoCommand;
+import com.kill3rtaco.tacoapi.json.JSONException;
+import com.kill3rtaco.tacoapi.json.JSONObject;
 import com.kill3rtaco.tacoapi.util.ItemUtils.DisplayName;
 
 public class MailInfoCommand extends TacoCommand {
 
 	public MailInfoCommand() {
-		super("mail-info", new String[]{"mi"}, "[id]", "View detailed ItemMail information", Permission.VIEW_MAIL_INFO);
+		super("mail-info", new String[]{"mi"}, "[id]", "View detailed ItemMail information", ItemMailConstants.P_VIEW_MAIL_INFO);
 		
 	}
 
@@ -49,17 +53,46 @@ public class MailInfoCommand extends TacoCommand {
 			friendlyName = "&2" + name;
 		String matId = "&2" + im.getItemTypeId() + (im.getItemDamage() > 0 ? "&7:&2" + im.getItemDamage() : "");
 		String time = TacoAPI.getChatUtils().getFriendlyTimestamp(im.getSendDate());
-		String header = TacoAPI.getChatUtils().createHeader('1', "&9ItemMail Informtaion");
+		String header = TacoAPI.getChatUtils().createHeader('1', "&9ItemMail Information");
 		ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, header);
-		ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&3Mail ID&7: &b" + im.getMailId());
+		ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&3Mail ID&7: &b" + im.getMailId() + " &8[" + (id) + "]");
 		ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&6Sent by&7: &2" + im.getSender());
 		ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&6Sent on&7: &2" + time);
-		ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&6Contains&7: &2" + amount + " " + friendlyName);
 		ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&3Material ID&7: " + matId);
-		if(im.hasEnchantments()){
+		ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&6Contains&7: &2" + amount + " " + friendlyName);
+		if(im.getRawData().has("enchantments")){
 			ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&6Enchantments&7: "
 					+ ItemMailMain.plugin.getEnchantmentString(im.getEnchantmentCode()) + " "
 					+ "&a(&2" + im.getEnchantmentCode() + "&a)");
+		}
+		if(im.getRawData().has("armor-meta")){
+			Color c = ((LeatherArmorMeta) im.getItems().getItemMeta()).getColor();
+			String hex = "#";
+			hex += Integer.parseInt(c.getRed() + "" , 16);
+			hex += Integer.parseInt(c.getGreen() + "" , 16);
+			hex += Integer.parseInt(c.getBlue() + "" , 16);
+			ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&6Armor Color&7: &2" + hex);
+		}
+		if(im.getRawData().has("book-meta")){
+			JSONObject bookMeta;
+			try {
+				bookMeta = im.getRawData().getJSONObject("book-meta");
+				if(bookMeta.has("enchantments")){
+					String display = ItemMailMain.plugin.getEnchantmentString(bookMeta.getString("enchantments"));
+					ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&6Enchantment(s)&7: " + display);
+				}else{
+					if(bookMeta.has("title")){
+						String title = bookMeta.getString("title");
+						String author = bookMeta.getString("author");
+						ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&6Title&7: &2" + title + " &aby &2" + author);
+					}
+				}
+				if(bookMeta.has("pages")){
+					ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&6Pages&7: " + bookMeta.getJSONArray("pages").length());
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 		ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&8To open: &7/im open " + id);
 		ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&8To delete: &7/im delete " + id);

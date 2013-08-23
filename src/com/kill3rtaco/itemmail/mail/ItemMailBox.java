@@ -23,16 +23,18 @@ public class ItemMailBox extends AbstractMailBox<ItemMail> {
 	@Override
 	public void reload() {
 		unopened.clear();
-		String sql = "SELECT `id` FROM `im_data` WHERE `receiver` = ? AND `type` = ? AND `read` = ? LIMIT 100";
+		String sql = "SELECT `id` FROM `itemmail` WHERE `receiver` = ? AND `type` = ? AND `read` = ? LIMIT 100";
 		QueryResults query = TacoAPI.getDB().read(sql, owner.getName(), "mail", 0);
 		if(query != null && query.hasRows()){
 			for(int i=0; i<query.rowCount(); i++){
 				try {
 					int id = query.getInteger(i, "id");
 					ItemMail im = new ItemMail(id);
+					if(im.getItems() == null) continue;
 					unopened.add(im);
 				} catch (DatabaseException e) {
 					e.printStackTrace();
+					break;
 				}
 			}
 		}

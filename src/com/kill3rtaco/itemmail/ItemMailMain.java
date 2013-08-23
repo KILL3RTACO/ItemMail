@@ -1,6 +1,5 @@
 package com.kill3rtaco.itemmail;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.enchantments.Enchantment;
@@ -10,6 +9,7 @@ import com.kill3rtaco.itemmail.cmds.ItemMailCommandHandler;
 import com.kill3rtaco.itemmail.data.ItemMailDatabase;
 import com.kill3rtaco.tacoapi.TacoAPI;
 import com.kill3rtaco.tacoapi.api.TacoPlugin;
+import com.kill3rtaco.tacoapi.api.serialization.EnchantmentSerialization;
 import com.kill3rtaco.tacoapi.util.ItemUtils.DisplayName;
 import com.kill3rtaco.tacoapi.util.ItemUtils.EnchantDisplayName;
 
@@ -26,44 +26,14 @@ public class ItemMailMain extends TacoPlugin {
 			startMetrics();
 			registerEvents(new ItemMailListener());
 			registerCommand(new ItemMailCommandHandler());
-			chat.out("Enabled");
 		}else{
-			chat.out("Could not enable ItemMail; could not establish a connection to the MySQL database");
+			chat.outSevere("Could not enable ItemMail; could not establish a connection to the MySQL database");
 		}
 	}
 
 	@Override
 	public void onStop() {
 		
-	}
-	
-	public HashMap<Enchantment, Integer> getEnchantmentsFromCode(String code){
-		HashMap<Enchantment, Integer> enchants = new HashMap<Enchantment, Integer>();
-		if(code.length() == 0){
-			return enchants;
-		}
-		String nums = Long.parseLong(code, 32) + "";
-		System.out.println(nums);
-		for(int i=0; i<nums.length(); i+=3){
-			int enchantId = Integer.parseInt(nums.substring(i, i+2));
-			int enchantLevel = Integer.parseInt(nums.charAt(i+2) + "");
-			Enchantment ench = Enchantment.getById(enchantId);
-			enchants.put(ench, enchantLevel);
-		}
-		return enchants;
-	}
-	
-	public String getCodeFromEnchantments(Map<Enchantment, Integer> enchants){
-		String enchantAndLevels = "";
-		for(Enchantment e : enchants.keySet()){
-			int level = enchants.get(e);
-			String id = e.getId() + "";
-			if(e.getId() < 10) id = "0" + id;
-			id = id + (level + "");
-			enchantAndLevels = enchantAndLevels + id;
-		}
-		long nums = Long.parseLong(enchantAndLevels);
-		return Long.toString(nums, 32);
 	}
 	
 	public String getEnchantmentString(Map<Enchantment, Integer> enchants){
@@ -80,7 +50,7 @@ public class ItemMailMain extends TacoPlugin {
 	}
 	
 	public String getEnchantmentString(String enchantCode){
-		return getEnchantmentString(getEnchantmentsFromCode(enchantCode));
+		return getEnchantmentString(EnchantmentSerialization.getEnchantments(enchantCode));
 	}
 	
 	public String getDisplayString(ItemStack items){

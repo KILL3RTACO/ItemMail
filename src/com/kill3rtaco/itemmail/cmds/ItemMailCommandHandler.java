@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 
 import com.kill3rtaco.itemmail.ItemMailMain;
 import com.kill3rtaco.itemmail.cmds.im.AcceptCommand;
+import com.kill3rtaco.itemmail.cmds.im.ConvertCommand;
 import com.kill3rtaco.itemmail.cmds.im.DeclineCommand;
 import com.kill3rtaco.itemmail.cmds.im.DeleteCommand;
 import com.kill3rtaco.itemmail.cmds.im.MailBoxCommand;
@@ -19,12 +20,13 @@ import com.kill3rtaco.tacoapi.api.TacoCommandHandler;
 public class ItemMailCommandHandler extends TacoCommandHandler {
 
 	public ItemMailCommandHandler() {
-		super("im", "ItemMail information/commands", "");
+		super("im", "ItemMail information and commands", "");
 	}
 
 	@Override
 	protected void registerCommands() {
 		registerCommand(new AcceptCommand());
+		registerCommand(new ConvertCommand());
 		registerCommand(new DeclineCommand());
 		registerCommand(new DeleteCommand());
 		registerCommand(new MailBoxCommand());

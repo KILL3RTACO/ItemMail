@@ -2,8 +2,8 @@ package com.kill3rtaco.itemmail.cmds.im;
 
 import org.bukkit.entity.Player;
 
+import com.kill3rtaco.itemmail.ItemMailConstants;
 import com.kill3rtaco.itemmail.ItemMailMain;
-import com.kill3rtaco.itemmail.Permission;
 import com.kill3rtaco.itemmail.mail.ItemMailBox;
 import com.kill3rtaco.tacoapi.TacoAPI;
 import com.kill3rtaco.tacoapi.api.TacoCommand;
@@ -11,7 +11,7 @@ import com.kill3rtaco.tacoapi.api.TacoCommand;
 public class MailBoxCommand extends TacoCommand {
 
 	public MailBoxCommand() {
-		super("mb", new String[]{"mailbox"}, "[page]", "View your mailbox", Permission.VIEW_MAILBOX);
+		super("mb", new String[]{"mailbox"}, "[page]", "View your mailbox", ItemMailConstants.P_VIEW_MAILBOX);
 	}
 
 	@Override

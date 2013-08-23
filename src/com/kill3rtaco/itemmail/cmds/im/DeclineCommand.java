@@ -2,8 +2,8 @@ package com.kill3rtaco.itemmail.cmds.im;
 
 import org.bukkit.entity.Player;
 
+import com.kill3rtaco.itemmail.ItemMailConstants;
 import com.kill3rtaco.itemmail.ItemMailMain;
-import com.kill3rtaco.itemmail.Permission;
 import com.kill3rtaco.itemmail.request.ItemRequest;
 import com.kill3rtaco.itemmail.request.ItemRequestBox;
 import com.kill3rtaco.tacoapi.TacoAPI;
@@ -12,7 +12,7 @@ import com.kill3rtaco.tacoapi.api.TacoCommand;
 public class DeclineCommand extends TacoCommand {
 
 	public DeclineCommand() {
-		super("decline", new String[]{"dec"}, "[id/*]", "Decline ItemRequests", Permission.DECLINE_REQUEST);
+		super("decline", new String[]{"dec"}, "[id/*]", "Decline ItemRequests", ItemMailConstants.P_DECLINE_REQUEST);
 	}
 
 	@Override

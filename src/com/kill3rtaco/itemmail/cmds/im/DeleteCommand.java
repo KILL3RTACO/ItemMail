@@ -2,8 +2,8 @@ package com.kill3rtaco.itemmail.cmds.im;
 
 import org.bukkit.entity.Player;
 
+import com.kill3rtaco.itemmail.ItemMailConstants;
 import com.kill3rtaco.itemmail.ItemMailMain;
-import com.kill3rtaco.itemmail.Permission;
 import com.kill3rtaco.itemmail.mail.ItemMail;
 import com.kill3rtaco.itemmail.mail.ItemMailBox;
 import com.kill3rtaco.tacoapi.TacoAPI;
@@ -12,7 +12,7 @@ import com.kill3rtaco.tacoapi.api.TacoCommand;
 public class DeleteCommand extends TacoCommand {
 
 	public DeleteCommand() {
-		super("delete", new String[]{"del", "rm", "d"}, "[id/*]", "Delete ItemMail", Permission.DELETE_MAIL);
+		super("delete", new String[]{"del", "rm", "d"}, "[id/*]", "Delete ItemMail", ItemMailConstants.P_DELETE_MAIL);
 	}
 
 	@Override
