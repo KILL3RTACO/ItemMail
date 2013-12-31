@@ -67,11 +67,12 @@ public class MailInfoCommand extends TacoCommand {
 		}
 		if(im.getRawData().has("armor-meta")){
 			Color c = ((LeatherArmorMeta) im.getItems().getItemMeta()).getColor();
-			String hex = "#";
-			hex += Integer.parseInt(c.getRed() + "" , 16);
-			hex += Integer.parseInt(c.getGreen() + "" , 16);
-			hex += Integer.parseInt(c.getBlue() + "" , 16);
-			ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&6Armor Color&7: &2" + hex);
+			String hex = "#" + Integer.toHexString(c.asRGB() & 0xffffff);
+//			hex += Integer.parseInt(c.getRed() + "" , 16);
+//			hex += Integer.parseInt(c.getGreen() + "" , 16);
+//			hex += Integer.parseInt(c.getBlue() + "" , 16);
+			ItemMailMain.plugin.chat.sendPlayerMessageNoHeader(player, "&6Armor Color&7: &2" + hex  + " " +
+					String.format("&a(&2%d&a, &2%d&a, &2%d&a)", c.getRed(), c.getGreen(), c.getBlue()));
 		}
 		if(im.getRawData().has("book-meta")){
 			JSONObject bookMeta;
